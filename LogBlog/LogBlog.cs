@@ -19,7 +19,8 @@ namespace logblog_console
             Console.WriteLine("Please point me to the log");
 
             //logAddress = Console.ReadLine();
-            logAddress = "D:\\Users\\colin.denny\\Desktop\\LogBlog\\SWIM.JobServices.RetailWindowsService.2016.09.05.log";
+            //logAddress = "D:\\Users\\colin.denny\\Desktop\\LogBlog\\SWIM.JobServices.RetailWindowsService.2016.09.05.log";
+            logAddress = @"C:\Users\cden\Desktop\GitHub\LogBlog\SWIM.JobServices.RetailWindowsService.2016.09.05.log";
 
             Console.WriteLine("Reading Log: " + logAddress);
 
