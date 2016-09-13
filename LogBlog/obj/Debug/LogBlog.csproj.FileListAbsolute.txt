@@ -1,0 +1,6 @@
+D:\Users\colin.denny\Desktop\GitHub\LogBlog.git\trunk\LogBlog\obj\Debug\LogBlog.csprojResolveAssemblyReference.cache
+D:\Users\colin.denny\Desktop\GitHub\LogBlog.git\trunk\LogBlog\bin\Debug\LogBlog.exe.config
+D:\Users\colin.denny\Desktop\GitHub\LogBlog.git\trunk\LogBlog\bin\Debug\LogBlog.exe
+D:\Users\colin.denny\Desktop\GitHub\LogBlog.git\trunk\LogBlog\bin\Debug\LogBlog.pdb
+D:\Users\colin.denny\Desktop\GitHub\LogBlog.git\trunk\LogBlog\obj\Debug\LogBlog.exe
+D:\Users\colin.denny\Desktop\GitHub\LogBlog.git\trunk\LogBlog\obj\Debug\LogBlog.pdb
