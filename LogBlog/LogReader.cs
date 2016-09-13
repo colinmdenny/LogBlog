@@ -30,11 +30,12 @@ public class LogReader
                 Console.WriteLine("\n" + "Error on Line #" + LineNo + "\n");
 
                 // Print out the error using the context buffers to determine the number of lines
-                int startLine = LineNo - (beforeContextBuffer + 1);
-                int endLine = LineNo + (afterContextBuffer - 1);
+                // Take 1 off the line number to account for zero index in array
+                int startLine = LineNo - beforeContextBuffer;
+                int endLine = LineNo + afterContextBuffer;
                 while (startLine <= endLine)
                 {
-                    Console.WriteLine(lines.GetValue(startLine));
+                    Console.WriteLine(startLine + " --- " + lines.GetValue(startLine -1));
                     startLine++;
                 }
                 bufferedLine = endLine;
