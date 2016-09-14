@@ -27,7 +27,7 @@ public class LogReader
             if ((line.ToLower().Contains("exception") || line.ToLower().Contains("error")) && (bufferedLine < LineNo))
             {
                 // Write to console
-                Console.WriteLine("\n" + "Error on Line #" + LineNo + "\n");
+                Console.WriteLine("\n" + "Error on Line #" + LineNo + " in " + LogAddress + "\n");
 
                 // Print out the error using the context buffers to determine the number of lines
                 // Take 1 off the line number to account for zero index in array

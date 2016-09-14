@@ -10,3 +10,9 @@ C:\Users\cden\Desktop\GitHub\LogBlog\trunk\LogBlog\obj\Debug\LogBlog.pdb
 C:\Users\cden\Desktop\GitHub\LogBlog\trunk\LogBlog\bin\Debug\LogBlog.exe
 C:\Users\cden\Desktop\GitHub\LogBlog\trunk\LogBlog\bin\Debug\LogBlog.pdb
 C:\Users\cden\Desktop\GitHub\LogBlog\trunk\LogBlog\obj\Debug\LogBlog.csprojResolveAssemblyReference.cache
+D:\Users\colin.denny\Desktop\GitHub\LogBlog\trunk\LogBlog\bin\Debug\LogBlog.exe.config
+D:\Users\colin.denny\Desktop\GitHub\LogBlog\trunk\LogBlog\obj\Debug\LogBlog.exe
+D:\Users\colin.denny\Desktop\GitHub\LogBlog\trunk\LogBlog\obj\Debug\LogBlog.pdb
+D:\Users\colin.denny\Desktop\GitHub\LogBlog\trunk\LogBlog\bin\Debug\LogBlog.exe
+D:\Users\colin.denny\Desktop\GitHub\LogBlog\trunk\LogBlog\bin\Debug\LogBlog.pdb
+D:\Users\colin.denny\Desktop\GitHub\LogBlog\trunk\LogBlog\obj\Debug\LogBlog.csprojResolveAssemblyReference.cache
