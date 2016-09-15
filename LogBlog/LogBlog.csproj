@@ -43,7 +43,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="LogBlog.cs" />
-    <Compile Include="LogReader.cs" />
+    <Compile Include="LogReader.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="LogReader_Phil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
