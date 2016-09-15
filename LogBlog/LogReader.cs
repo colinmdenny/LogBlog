@@ -12,17 +12,22 @@ public class LogReader
     private int beforeContextBuffer = Int32.Parse(ConfigurationManager.AppSettings["beforeContextBuffer"]);
     private int afterContextBuffer = Int32.Parse(ConfigurationManager.AppSettings["afterContextBuffer"]);
     private int bufferedLine = -1;
-    
-    public LogReader(String logAddress)
+    private string logAddress;
+
+    public LogReader(string logPath)
 	{
+        // Set the class variable log path
+        logAddress = logPath;
+        
         // Read each line of the file into a string array. Each element
         // of the array is one line of the file.
-
         string[] lines = WriteSafeReadAllLines(@logAddress); 
 
-        //Display the lines to the console
+        // Display the lines to the console
+        DisplayAllErrors(lines, logAddress);
 
-        DisplayAllErrors(lines, logAddress);    
+        // Watch the log file
+        WatchLog();    
     }
         
     // Used to read a log file into an array 
@@ -30,7 +35,7 @@ public class LogReader
     // string[] lines = ReadAllLines(@LogAddress) is much quicker but cannot set the access level so it will throw and exception.
     // Not happy with performance
 
-    private string[] WriteSafeReadAllLines(String path)
+    private string[] WriteSafeReadAllLines(string path)
     {
         using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
         using (var sr = new StreamReader(fs))
@@ -75,5 +80,39 @@ public class LogReader
             }
         }
     }
-	
+
+    private void WatchLog ()
+    {
+        // Create a new FileSystemWatcher and set its properties.
+        FileSystemWatcher watcher = new FileSystemWatcher();
+        watcher.Path = Path.GetDirectoryName(logAddress);
+        // Filter to watch the specific file
+        watcher.Filter = Path.GetFileName(logAddress);
+
+        // Watch for changes in LastAccess and LastWritimes
+        watcher.NotifyFilter = NotifyFilters.LastWrite;
+
+        // Add event handler
+        watcher.Changed += new FileSystemEventHandler(OnChanged);
+
+        // Begin watching.
+        watcher.EnableRaisingEvents = true;
+
+        // Wait for the user to quit the program.
+        Console.WriteLine(Environment.NewLine + "Press \'q\' to quit the sample.");
+        while (Console.Read() != 'q') ;
+    }
+
+    // Define the event handlers.
+    private void OnChanged(object source, FileSystemEventArgs e)
+    {
+        // Specify what is done when a file is changed, created, or deleted.
+        DisplayUpdate();
+    }
+
+    private void DisplayUpdate ()
+    {
+        Console.WriteLine(Environment.NewLine + "Fileupdated");
+    }
+
 }

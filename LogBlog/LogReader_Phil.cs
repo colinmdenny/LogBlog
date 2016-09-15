@@ -7,7 +7,7 @@ using System.Linq;
 
 public class LogReader_Phil
 {
-    public LogReader_Phil(String LogAddress)
+    public LogReader_Phil(string LogAddress)
 	{
         // Get the context buffer setting from the app.config file
         // Use this to determine how many lines to write either side of the error
