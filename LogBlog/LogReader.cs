@@ -24,7 +24,7 @@ public class LogReader
         string[] lines = WriteSafeReadAllLines(@logAddress); 
 
         // Display the lines to the console
-        DisplayAllErrors(lines, logAddress);
+        DisplayAllErrors(lines);
 
         // Watch the log file
         WatchLog();    
@@ -40,23 +40,25 @@ public class LogReader
         using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
         using (var sr = new StreamReader(fs))
         {
-            List<string> listlines = new List<string>();
-            while (!sr.EndOfStream)
-            {
-                listlines.Add(sr.ReadLine());
-            }
+            string allText = sr.ReadToEnd();
+            string[] lines = allText.Split('\n');
+            return lines;
 
-            return listlines.ToArray();
+            //List<string> listlines = new List<string>();
+            //while (!sr.EndOfStream)
+            //{
+            //    listlines.Add(sr.ReadLine());
+            //}
+            //return listlines.ToArray();
         }
     }
 
     // Used to display all the errors in the log file
     // Do this when initially reading the file
 
-    private void DisplayAllErrors(Array lines, string logAddress)
+    private void DisplayAllErrors(Array lines)
     {
         // Display the errors in the file contents by using a loop.
-        System.Console.WriteLine("Log Contents:" + Environment.NewLine);
         foreach (string line in lines)
         {
             // Get the line number by using the array index and use a bufferedLine to ensure no duplicate errors
@@ -71,7 +73,7 @@ public class LogReader
                 // Take 1 off the line number to account for zero index in array
                 int startLine = LineNo - beforeContextBuffer;
                 int endLine = LineNo + afterContextBuffer;
-                while (startLine <= endLine)
+                while (startLine < endLine)
                 {
                     Console.WriteLine(startLine + " --- " + lines.GetValue(startLine - 1));
                     startLine++;
@@ -99,20 +101,28 @@ public class LogReader
         watcher.EnableRaisingEvents = true;
 
         // Wait for the user to quit the program.
-        Console.WriteLine(Environment.NewLine + "Press \'q\' to quit the sample.");
+        //Console.WriteLine(Environment.NewLine + "Press \'q\' to quit the sample.");
         while (Console.Read() != 'q') ;
     }
 
     // Define the event handlers.
     private void OnChanged(object source, FileSystemEventArgs e)
     {
+        Console.WriteLine(Environment.NewLine + "File updated. Checking for errors" + Environment.NewLine); // for debug
+        
         // Specify what is done when a file is changed, created, or deleted.
         DisplayUpdate();
     }
 
     private void DisplayUpdate ()
     {
-        Console.WriteLine(Environment.NewLine + "Fileupdated");
+        // Read each line of the file into a string array. Each element
+        // of the array is one line of the file.
+        string[] newLines = WriteSafeReadAllLines(@logAddress); 
+
+        // Display the lines to the console
+        DisplayAllErrors(newLines);
     }
+
 
 }
