@@ -53,6 +53,21 @@ public class LogReader
         }
     }
 
+    private string[] WriteSafeReadNewLines(string path)
+    {
+        using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+        using (var sr = new StreamReader(fs))
+        {
+            List<string> listlines = new List<string>();
+            while (!sr.EndOfStream)
+            {
+                listlines.Add(sr.ReadLine());
+            }
+            listlines.RemoveRange(0, (bufferedLine - 1));
+            return listlines.ToArray();
+        }
+    }
+
     // Used to display all the errors in the log file
     // Do this when initially reading the file
 
@@ -71,12 +86,17 @@ public class LogReader
 
                 // Print out the error using the context buffers to determine the number of lines
                 // Take 1 off the line number to account for zero index in array
-                int startLine = LineNo - beforeContextBuffer;
-                int endLine = LineNo + afterContextBuffer;
+                int startLine = LineNo - beforeContextBuffer -1;
+                int endLine = LineNo + afterContextBuffer -1;
+                if (endLine > lines.Length)
+                {
+                    endLine = lines.Length;
+                }
+
                 while (startLine < endLine)
                 {
-                    Console.WriteLine(startLine + " --- " + lines.GetValue(startLine - 1));
-                    startLine++;
+                     Console.WriteLine((startLine + 1) + " --- " + lines.GetValue(startLine));
+                      startLine++;
                 }
                 bufferedLine = endLine;
             }
@@ -118,7 +138,7 @@ public class LogReader
     {
         // Read each line of the file into a string array. Each element
         // of the array is one line of the file.
-        string[] newLines = WriteSafeReadAllLines(@logAddress); 
+        string[] newLines = WriteSafeReadNewLines(@logAddress); 
 
         // Display the lines to the console
         DisplayAllErrors(newLines);
