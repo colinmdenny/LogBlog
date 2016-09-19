@@ -53,6 +53,8 @@ public class LogReader
         }
     }
 
+    // Used to read a log file into an array then reduce the array to only the new lines
+
     private string[] WriteSafeReadNewLines(string path)
     {
         using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
@@ -63,7 +65,7 @@ public class LogReader
             {
                 listlines.Add(sr.ReadLine());
             }
-            listlines.RemoveRange(0, (bufferedLine - 1));
+            listlines.RemoveRange(0, ((bufferedLine - 1) - beforeContextBuffer));
             return listlines.ToArray();
         }
     }
@@ -99,6 +101,43 @@ public class LogReader
                       startLine++;
                 }
                 bufferedLine = endLine;
+            }
+        }
+    }
+
+    private void DisplayNewErrors(Array lines)
+    {
+        // Display the errors in the file contents by using a loop.
+        foreach (string line in lines)
+        {
+            // Get the line number by using the array index and use a bufferedLine to ensure no duplicate errors
+            int actualLineNo = Array.IndexOf(lines, line) + bufferedLine + 1;
+            int newLineNo = Array.IndexOf(lines, line);
+
+            if ((line.ToLower().Contains("exception") || line.ToLower().Contains("error")))
+            {
+                // Write to console
+                Console.WriteLine("\n" + "Error on Line #" + actualLineNo + " in " + logAddress + Environment.NewLine);
+
+                // Print out the error using the context buffers to determine the number of lines
+                int startLine = newLineNo - beforeContextBuffer;
+                int endLine = newLineNo + afterContextBuffer;
+                if (startLine < 0)
+                {
+                    startLine = 0;
+                }
+                
+                if (endLine > lines.Length)
+                {
+                    endLine = lines.Length;
+                }
+
+                while (startLine < endLine)
+                {
+                    Console.WriteLine((startLine + 1) + " --- " + lines.GetValue(startLine));
+                    startLine++;
+                }
+                bufferedLine = (endLine + bufferedLine);
             }
         }
     }
@@ -141,7 +180,7 @@ public class LogReader
         string[] newLines = WriteSafeReadNewLines(@logAddress); 
 
         // Display the lines to the console
-        DisplayAllErrors(newLines);
+        DisplayNewErrors(newLines);
     }
 
 
