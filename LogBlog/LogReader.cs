@@ -105,17 +105,25 @@ public class LogReader
         }
     }
 
+    // Used to display only the new errors in the log file
+    
     private void DisplayNewErrors(Array lines)
     {
+        // Define variable to count the amount of errors
+        int errorCount = 0;
+        
         // Display the errors in the file contents by using a loop.
         foreach (string line in lines)
         {
             // Get the line number by using the array index and use a bufferedLine to ensure no duplicate errors
-            int actualLineNo = Array.IndexOf(lines, line) + bufferedLine + 1;
+            int actualLineNo = Array.IndexOf(lines, line) + 1;
             int newLineNo = Array.IndexOf(lines, line);
 
             if ((line.ToLower().Contains("exception") || line.ToLower().Contains("error")))
             {
+                // Count the error
+                errorCount++;
+                
                 // Write to console
                 Console.WriteLine("\n" + "Error on Line #" + actualLineNo + " in " + logAddress + Environment.NewLine);
 
@@ -126,7 +134,7 @@ public class LogReader
                 {
                     startLine = 0;
                 }
-                
+
                 if (endLine > lines.Length)
                 {
                     endLine = lines.Length;
@@ -137,8 +145,16 @@ public class LogReader
                     Console.WriteLine((startLine + 1) + " --- " + lines.GetValue(startLine));
                     startLine++;
                 }
-                bufferedLine = (endLine + bufferedLine);
             }
+        }
+
+        // Update the buffer line to the correct line in the original file
+        bufferedLine = (lines.Length + (bufferedLine - beforeContextBuffer));
+
+        // If no errors were encountered feed that back to the user
+        if (errorCount.Equals(0))
+        {
+            Console.WriteLine("No new errors found!" + Environment.NewLine);
         }
     }
 
@@ -151,7 +167,7 @@ public class LogReader
         watcher.Filter = Path.GetFileName(logAddress);
 
         // Watch for changes in LastAccess and LastWritimes
-        watcher.NotifyFilter = NotifyFilters.LastWrite;
+        watcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.Size;
 
         // Add event handler
         watcher.Changed += new FileSystemEventHandler(OnChanged);
