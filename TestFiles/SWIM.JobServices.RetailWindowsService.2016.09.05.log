@@ -40680,3 +40680,4 @@ SendEmail : _smtpMail.Send(email.Subject, email.Body); COMPLETE
 05/09/2016 23:59:45.363::info::General::[59]::PoolProcInstanceChangeNotificationMethod: Get template
 05/09/2016 23:59:45.363::info::General::[59]::PoolProcInstanceChangeNotificationMethod: Main loop
 05/09/2016 23:59:45.391::info::General::[59]::PoolProcInstanceChangeTriggerMethod.Process started
+Error

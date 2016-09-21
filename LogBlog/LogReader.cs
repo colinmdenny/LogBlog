@@ -54,6 +54,7 @@ public class LogReader
     }
 
     // Used to read a log file into an array then reduce the array to only the new lines
+    // Note used as it help anything as still need to read the full file in. A better solution would be able to read from the log starting from the new lines.
 
     private string[] WriteSafeReadNewLines(string path)
     {
@@ -75,6 +76,9 @@ public class LogReader
 
     private void DisplayAllErrors(Array lines)
     {
+        // Use a variable to determine the amount of errors
+        int errorCount = 0;
+        
         // Display the errors in the file contents by using a loop.
         foreach (string line in lines)
         {
@@ -88,53 +92,8 @@ public class LogReader
 
                 // Print out the error using the context buffers to determine the number of lines
                 // Take 1 off the line number to account for zero index in array
-                int startLine = LineNo - beforeContextBuffer -1;
-                int endLine = LineNo + afterContextBuffer -1;
-                if (endLine > lines.Length)
-                {
-                    endLine = lines.Length;
-                }
-
-                while (startLine < endLine)
-                {
-                     Console.WriteLine((startLine + 1) + " --- " + lines.GetValue(startLine));
-                      startLine++;
-                }
-                bufferedLine = endLine;
-            }
-        }
-    }
-
-    // Used to display only the new errors in the log file
-    
-    private void DisplayNewErrors(Array lines)
-    {
-        // Define variable to count the amount of errors
-        int errorCount = 0;
-        
-        // Display the errors in the file contents by using a loop.
-        foreach (string line in lines)
-        {
-            // Get the line number by using the array index and use a bufferedLine to ensure no duplicate errors
-            int actualLineNo = Array.IndexOf(lines, line) + 1;
-            int newLineNo = Array.IndexOf(lines, line);
-
-            if ((line.ToLower().Contains("exception") || line.ToLower().Contains("error")))
-            {
-                // Count the error
-                errorCount++;
-                
-                // Write to console
-                Console.WriteLine("\n" + "Error on Line #" + actualLineNo + " in " + logAddress + Environment.NewLine);
-
-                // Print out the error using the context buffers to determine the number of lines
-                int startLine = newLineNo - beforeContextBuffer;
-                int endLine = newLineNo + afterContextBuffer;
-                if (startLine < 0)
-                {
-                    startLine = 0;
-                }
-
+                int startLine = LineNo - beforeContextBuffer - 1;
+                int endLine = LineNo + afterContextBuffer - 1;
                 if (endLine > lines.Length)
                 {
                     endLine = lines.Length;
@@ -145,16 +104,54 @@ public class LogReader
                     Console.WriteLine((startLine + 1) + " --- " + lines.GetValue(startLine));
                     startLine++;
                 }
+                bufferedLine = endLine;
+                errorCount++;
             }
         }
 
-        // Update the buffer line to the correct line in the original file
-        bufferedLine = (lines.Length + (bufferedLine - beforeContextBuffer));
-
-        // If no errors were encountered feed that back to the user
         if (errorCount.Equals(0))
         {
-            Console.WriteLine("No new errors found!" + Environment.NewLine);
+            Console.WriteLine("No errors or exceptions found!" + Environment.NewLine);
+        }
+    }
+
+    // Used to display only the new errors in the log file
+    // Not used still under development
+
+    private void DisplayNewErrors(Array lines)
+    {
+        // Display the new errors in the file contents by using a loop.
+        // Determine where to start looping by using the bufferedLine
+
+        int newLineStart = bufferedLine - 1;
+        int newLineEnd = lines.Length;
+
+        while (newLineStart < newLineEnd)
+        {
+            // Get the line number by using the array index and use a bufferedLine to ensure no duplicate errors
+            //int LineNo = Array.IndexOf(lines, line) + 1;
+
+            //if ((line.ToLower().Contains("exception") || line.ToLower().Contains("error")) && (bufferedLine < LineNo))
+            //{
+            //    // Write to console
+            //    Console.WriteLine("\n" + "Error on Line #" + LineNo + " in " + logAddress + Environment.NewLine);
+
+            //    // Print out the error using the context buffers to determine the number of lines
+            //    // Take 1 off the line number to account for zero index in array
+            //    int startLine = LineNo - beforeContextBuffer -1;
+            //    int endLine = LineNo + afterContextBuffer -1;
+            //    if (endLine > lines.Length)
+            //    {
+            //        endLine = lines.Length;
+            //    }
+
+            //    while (startLine < endLine)
+            //    {
+            //         Console.WriteLine((startLine + 1) + " --- " + lines.GetValue(startLine));
+            //          startLine++;
+            //    }
+            //    bufferedLine = endLine;
+            //}
         }
     }
 
@@ -183,7 +180,7 @@ public class LogReader
     // Define the event handlers.
     private void OnChanged(object source, FileSystemEventArgs e)
     {
-        Console.WriteLine(Environment.NewLine + "File updated. Checking for errors" + Environment.NewLine); // for debug
+        Console.WriteLine(Environment.NewLine + "File updated " + DateTime.Now.ToString("HH:mm:ss") + Environment.NewLine); // for debug
         
         // Specify what is done when a file is changed, created, or deleted.
         DisplayUpdate();
@@ -193,10 +190,10 @@ public class LogReader
     {
         // Read each line of the file into a string array. Each element
         // of the array is one line of the file.
-        string[] newLines = WriteSafeReadNewLines(@logAddress); 
+        string[] newLines = WriteSafeReadAllLines(@logAddress); 
 
         // Display the lines to the console
-        DisplayNewErrors(newLines);
+        DisplayAllErrors(newLines);
     }
 
 

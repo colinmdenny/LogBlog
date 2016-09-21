@@ -17,8 +17,8 @@ namespace logblog_console
 
 
             //logAddress = @"C:\Users\cden\Desktop\GitHub\LogBlog\trunk\TestFiles\SWIM.JobServices.RetailWindowsService.2016.09.05.log";
-            //logAddress = @"Z:\Applications\SWIM\Logs\SWIM.JobServices.RetailWindowsService.2016.09.20.log";
-            logAddress = @"D:\Users\colin.denny\Desktop\GitHub\LogBlog\trunk\TestFiles\SWIM.JobServices.RetailWindowsService.2016.09.05.log";
+            //logAddress = @"Z:\Applications\SWIM\Logs\SWIM.JobServices.RetailWindowsService.2016.09.21.log";
+            //logAddress = @"D:\Users\colin.denny\Desktop\GitHub\LogBlog\trunk\TestFiles\SWIM.JobServices.RetailWindowsService.2016.09.05.log";
 
             
             
@@ -28,14 +28,17 @@ namespace logblog_console
             Console.SetWindowPosition(0, 0);
             Console.SetWindowSize(150, 50);
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.Title = "LogBlog - " + "blogging for " + Path.GetFileName(logAddress);
+            Console.Title = "Welcome to LogBlog";
             //Want to be able to setup - insert and quick edit mode as standard on startup - allows copy paste
 
-            // Interact with the user
+            // Interact with the user to get the log address
             Console.WriteLine("***** LogBlog *****" + Environment.NewLine);
             Console.WriteLine("Please enter the full path, including filename and extension, to the log" + Environment.NewLine);
-            //logAddress = @Console.ReadLine();
-            Console.WriteLine("Reading Log: " + logAddress + Environment.NewLine);
+            logAddress = @Console.ReadLine();
+           
+            //Update the user and the console title to reflect the log
+            Console.WriteLine(Environment.NewLine + "Reading Log: " + logAddress + Environment.NewLine);
+            Console.Title = "LogBlog - " + "blogging for " + Path.GetFileName(logAddress);
 
             // Initiate the log reader
             LogReader newLog = new LogReader(logAddress);
