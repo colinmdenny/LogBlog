@@ -85,7 +85,7 @@ public class LogReader
             // Get the line number by using the array index and use a bufferedLine to ensure no duplicate errors
             int LineNo = Array.IndexOf(lines, line) + 1;
 
-            if ((line.ToLower().Contains("exception") || line.ToLower().Contains("error")) && (bufferedLine < LineNo))
+            if ((line.ToLower().Contains("exception") || line.ToLower().Contains("error") || line.ToLower().Contains("paused")) && (bufferedLine < LineNo))
             {
                 // Write to console
                 Console.WriteLine("\n" + "Error on Line #" + LineNo + " in " + logAddress + Environment.NewLine);

@@ -17,7 +17,7 @@ namespace logblog_console
 
 
             //logAddress = @"C:\Users\cden\Desktop\GitHub\LogBlog\trunk\TestFiles\SWIM.JobServices.RetailWindowsService.2016.09.05.log";
-            //logAddress = @"Z:\Applications\SWIM\Logs\SWIM.JobServices.RetailWindowsService.2016.09.21.log";
+            //logAddress = @"Z:\Applications\SWIM\Logs\SWIM.JobServices.RetailWindowsService.2016.09.23.log";
             //logAddress = @"D:\Users\colin.denny\Desktop\GitHub\LogBlog\trunk\TestFiles\SWIM.JobServices.RetailWindowsService.2016.09.05.log";
 
             
