@@ -24,8 +24,13 @@ namespace LogBlog_WinForm_v0._2
             string logAdress = openFileDialog.FileName;
             this.fileNameBox.Text = logAdress;
             // Initiate the log reader
-            LogReader newLog = new LogReader(@logAdress);
+            //LogReader newLog = new LogReader(@logAdress);
             Console.WriteLine(result); // <-- For debugging use
+        }
+
+        private void exitButton_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
         }
     }
 }
