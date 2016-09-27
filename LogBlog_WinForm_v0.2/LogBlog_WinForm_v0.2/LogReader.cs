@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LogBlog_WinForm_v0._2;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
@@ -13,9 +14,12 @@ public class LogReader
     private int afterContextBuffer = Int32.Parse(ConfigurationManager.AppSettings["afterContextBuffer"]);
     private int bufferedLine = -1;
     private string logAddress;
+    private MainForm form;
 
-    public LogReader(string logPath)
-	{
+    public LogReader(string logPath, MainForm f)
+    {
+        form = f;
+ 
         // Set the class variable log path
         logAddress = logPath;
         
@@ -54,7 +58,7 @@ public class LogReader
     }
 
     // Used to read a log file into an array then reduce the array to only the new lines
-    // Note used as it help anything as still need to read the full file in. A better solution would be able to read from the log starting from the new lines.
+    // Not used as it help anything as still need to read the full file in. A better solution would be able to read from the log starting from the new lines.
 
     private string[] WriteSafeReadNewLines(string path)
     {
@@ -87,8 +91,9 @@ public class LogReader
 
             if ((line.ToLower().Contains("exception") || line.ToLower().Contains("error") || line.ToLower().Contains("paused")) && (bufferedLine < LineNo))
             {
-                // Write to console
-                Console.WriteLine("\n" + "Error on Line #" + LineNo + " in " + logAddress + Environment.NewLine);
+                // Write to MainForm
+
+                form.UpdateOutput("\n" + "Error on Line #" + LineNo + " in " + logAddress + Environment.NewLine);
 
                 // Print out the error using the context buffers to determine the number of lines
                 // Take 1 off the line number to account for zero index in array
@@ -101,7 +106,7 @@ public class LogReader
 
                 while (startLine < endLine)
                 {
-                    Console.WriteLine((startLine + 1) + " --- " + lines.GetValue(startLine));
+                    form.UpdateOutput((startLine + 1) + " --- " + lines.GetValue(startLine));
                     startLine++;
                 }
                 bufferedLine = endLine;
@@ -111,7 +116,7 @@ public class LogReader
 
         if (errorCount.Equals(0))
         {
-            Console.WriteLine("No errors or exceptions found!" + Environment.NewLine);
+            form.UpdateOutput("No errors or exceptions found!" + Environment.NewLine);
         }
     }
 
@@ -180,7 +185,7 @@ public class LogReader
     // Define the event handlers.
     private void OnChanged(object source, FileSystemEventArgs e)
     {
-        Console.WriteLine(Environment.NewLine + "File updated " + DateTime.Now.ToString("HH:mm:ss") + Environment.NewLine); // for debug
+        form.UpdateOutput(Environment.NewLine + "File updated " + DateTime.Now.ToString("HH:mm:ss") + Environment.NewLine); // for debug
         
         // Specify what is done when a file is changed, created, or deleted.
         DisplayUpdate();

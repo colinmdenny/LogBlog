@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace LogBlog_WinForm_v0._2
 {
-    public partial class Output : Form
+    public partial class MainForm : Form
     {
-        public Output()
+        public MainForm()
         {
             InitializeComponent();
         }
@@ -22,15 +22,20 @@ namespace LogBlog_WinForm_v0._2
             // Show the dialog and get result.
             DialogResult result = openFileDialog.ShowDialog();
             string logAdress = openFileDialog.FileName;
-            this.fileNameBox.Text = logAdress;
+            this.fileNameBox.Text = @logAdress;
             // Initiate the log reader
-            //LogReader newLog = new LogReader(@logAdress);
+            LogReader newLog = new LogReader(logAdress, this);
             Console.WriteLine(result); // <-- For debugging use
         }
 
         private void exitButton_Click(object sender, EventArgs e)
         {
             Application.Exit();
+        }
+
+        public void UpdateOutput (String textLine)
+        {
+            this.outputBox.Text = textLine;
         }
     }
 }

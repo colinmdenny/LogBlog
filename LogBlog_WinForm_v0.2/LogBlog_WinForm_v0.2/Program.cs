@@ -16,7 +16,7 @@ namespace LogBlog_WinForm_v0._2
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Output());
+            Application.Run(new MainForm());
         }
     }
 }
