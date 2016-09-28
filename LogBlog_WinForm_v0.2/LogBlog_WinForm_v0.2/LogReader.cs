@@ -1,8 +1,11 @@
 ﻿using LogBlog_WinForm_v0._2;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Configuration;
 using System.IO;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
 public class LogReader
 {
@@ -13,11 +16,15 @@ public class LogReader
     private int beforeContextBuffer = Int32.Parse(ConfigurationManager.AppSettings["beforeContextBuffer"]);
     private int afterContextBuffer = Int32.Parse(ConfigurationManager.AppSettings["afterContextBuffer"]);
     private int bufferedLine = -1;
-    private string logAddress;
-    private MainForm form;
+    private static string logAddress;
+    private static MainForm form;
+    private static FileSystemWatcher watcher;
+    private Timer timer;
+
 
     public LogReader(string logPath, MainForm f)
     {
+        // Setup the class variable form to the current instance of the passed over form
         form = f;
  
         // Set the class variable log path
@@ -30,8 +37,19 @@ public class LogReader
         // Display the lines to the console
         DisplayAllErrors(lines);
 
-        // Watch the log file
-        WatchLog();    
+        // Setup a timer to do a asynchronous call to read the log. This will ensure the UI doesn't freeze       
+        timer = new Timer();
+        timer.Interval = 1000;
+        timer.Enabled = true;
+        
+        // Setup up and event to handle what to do when then timer is activated
+        timer.Tick += new EventHandler(TimerEventProcessor);
+
+        // Setup the log watcher
+        SetupWatchLog();   
+ 
+        // Start the timer to check the log at every interval
+        timer.Start();
     }
         
     // Used to read a log file into an array 
@@ -93,7 +111,7 @@ public class LogReader
             {
                 // Write to MainForm
 
-                form.UpdateOutput("\n" + "Error on Line #" + LineNo + " in " + logAddress + Environment.NewLine);
+                form.UpdateOutput(Environment.NewLine + "Error on Line #" + LineNo + " in " + logAddress + Environment.NewLine + Environment.NewLine);
 
                 // Print out the error using the context buffers to determine the number of lines
                 // Take 1 off the line number to account for zero index in array
@@ -116,7 +134,7 @@ public class LogReader
 
         if (errorCount.Equals(0))
         {
-            form.UpdateOutput("No errors or exceptions found!" + Environment.NewLine);
+            form.UpdateOutput("No errors or exceptions found!" + "\n");
         }
     }
 
@@ -160,11 +178,12 @@ public class LogReader
         }
     }
 
-    private void WatchLog ()
+    private void SetupWatchLog()
     {
         // Create a new FileSystemWatcher and set its properties.
-        FileSystemWatcher watcher = new FileSystemWatcher();
+        watcher = new FileSystemWatcher();
         watcher.Path = Path.GetDirectoryName(logAddress);
+
         // Filter to watch the specific file
         watcher.Filter = Path.GetFileName(logAddress);
 
@@ -173,19 +192,12 @@ public class LogReader
 
         // Add event handler
         watcher.Changed += new FileSystemEventHandler(OnChanged);
-
-        // Begin watching.
-        watcher.EnableRaisingEvents = true;
-
-        // Wait for the user to quit the program.
-        //Console.WriteLine(Environment.NewLine + "Press \'q\' to quit the sample.");
-        while (Console.Read() != 'q') ;
     }
-
-    // Define the event handlers.
+               
+     // Define the event handlers.
     private void OnChanged(object source, FileSystemEventArgs e)
     {
-        form.UpdateOutput(Environment.NewLine + "File updated " + DateTime.Now.ToString("HH:mm:ss") + Environment.NewLine); // for debug
+        form.UpdateOutput("\u2028" + "File updated " + DateTime.Now.ToString("HH:mm:ss") + "\u2028"); // for debug
         
         // Specify what is done when a file is changed, created, or deleted.
         DisplayUpdate();
@@ -201,5 +213,10 @@ public class LogReader
         DisplayAllErrors(newLines);
     }
 
-
+    private static void TimerEventProcessor(Object myObject,
+                                        EventArgs myEventArgs)
+    {
+        // Begin watching the log
+        watcher.EnableRaisingEvents = true;
+    }
 }

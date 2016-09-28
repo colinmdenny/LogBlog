@@ -22,7 +22,8 @@ namespace LogBlog_WinForm_v0._2
             // Show the dialog and get result.
             DialogResult result = openFileDialog.ShowDialog();
             string logAdress = openFileDialog.FileName;
-            this.fileNameBox.Text = @logAdress;
+            UpdateFileNameBox(logAdress);
+            
             // Initiate the log reader
             LogReader newLog = new LogReader(logAdress, this);
             Console.WriteLine(result); // <-- For debugging use
@@ -33,9 +34,22 @@ namespace LogBlog_WinForm_v0._2
             Application.Exit();
         }
 
-        public void UpdateOutput (String textLine)
+        public void UpdateOutput (String text)
         {
-            this.outputBox.Text = textLine;
+            if (this.outputBox.InvokeRequired)
+            {
+                //I am not on the main UI thread
+                Invoke((MethodInvoker)delegate { this.UpdateOutput(text); });
+            }
+            else
+            {
+                this.outputBox.AppendText(text);
+            }
+        }
+
+        public void UpdateFileNameBox(String text)
+        {
+            this.fileNameBox.AppendText(text);
         }
     }
 }

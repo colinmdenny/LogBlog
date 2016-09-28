@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.exitButton = new System.Windows.Forms.Button();
             this.browseButton = new System.Windows.Forms.Button();
@@ -40,31 +41,29 @@
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.ColumnCount = 3;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 24F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 9F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 200F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 75F));
             this.tableLayoutPanel1.Controls.Add(this.exitButton, 2, 2);
             this.tableLayoutPanel1.Controls.Add(this.browseButton, 2, 0);
             this.tableLayoutPanel1.Controls.Add(this.fileNameBox, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.outputBox, 1, 1);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(8, 7, 8, 7);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 3;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 72F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 72F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(1957, 1054);
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(734, 442);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // exitButton
             // 
             this.exitButton.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.exitButton.Location = new System.Drawing.Point(1765, 989);
-            this.exitButton.Margin = new System.Windows.Forms.Padding(8, 7, 8, 7);
+            this.exitButton.Location = new System.Drawing.Point(662, 415);
             this.exitButton.Name = "exitButton";
-            this.exitButton.Size = new System.Drawing.Size(184, 58);
+            this.exitButton.Size = new System.Drawing.Size(69, 24);
             this.exitButton.TabIndex = 0;
             this.exitButton.Text = "Exit";
             this.exitButton.UseVisualStyleBackColor = true;
@@ -73,10 +72,9 @@
             // browseButton
             // 
             this.browseButton.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.browseButton.Location = new System.Drawing.Point(1765, 7);
-            this.browseButton.Margin = new System.Windows.Forms.Padding(8, 7, 8, 7);
+            this.browseButton.Location = new System.Drawing.Point(662, 3);
             this.browseButton.Name = "browseButton";
-            this.browseButton.Size = new System.Drawing.Size(184, 58);
+            this.browseButton.Size = new System.Drawing.Size(69, 24);
             this.browseButton.TabIndex = 1;
             this.browseButton.Text = "Browse";
             this.browseButton.UseVisualStyleBackColor = true;
@@ -86,22 +84,21 @@
             // 
             this.fileNameBox.BackColor = System.Drawing.SystemColors.Window;
             this.fileNameBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.fileNameBox.Location = new System.Drawing.Point(32, 7);
-            this.fileNameBox.Margin = new System.Windows.Forms.Padding(8, 7, 8, 7);
+            this.fileNameBox.Location = new System.Drawing.Point(12, 3);
             this.fileNameBox.Name = "fileNameBox";
             this.fileNameBox.ReadOnly = true;
-            this.fileNameBox.Size = new System.Drawing.Size(1717, 38);
+            this.fileNameBox.Size = new System.Drawing.Size(644, 20);
             this.fileNameBox.TabIndex = 2;
             // 
             // outputBox
             // 
             this.outputBox.BackColor = System.Drawing.SystemColors.Window;
             this.outputBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.outputBox.Location = new System.Drawing.Point(32, 79);
-            this.outputBox.Margin = new System.Windows.Forms.Padding(8, 7, 8, 7);
+            this.outputBox.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.outputBox.Location = new System.Drawing.Point(12, 33);
             this.outputBox.Name = "outputBox";
             this.outputBox.ReadOnly = true;
-            this.outputBox.Size = new System.Drawing.Size(1717, 896);
+            this.outputBox.Size = new System.Drawing.Size(644, 376);
             this.outputBox.TabIndex = 3;
             this.outputBox.Text = "";
             // 
@@ -111,11 +108,11 @@
             // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(16F, 31F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1957, 1054);
+            this.ClientSize = new System.Drawing.Size(734, 442);
             this.Controls.Add(this.tableLayoutPanel1);
-            this.Margin = new System.Windows.Forms.Padding(8, 7, 8, 7);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MainForm";
             this.Text = "LogBlog";
             this.tableLayoutPanel1.ResumeLayout(false);
