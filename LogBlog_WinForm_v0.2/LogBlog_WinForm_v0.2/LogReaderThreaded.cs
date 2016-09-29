@@ -1,13 +1,9 @@
-﻿using LogBlog_WinForm_v0._2;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Configuration;
 using System.IO;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
-public class LogReader
+public class LogReaderThreaded
 {
     // Get the context buffer setting from the app.config file
     // Use these to determine how many lines to write either side of the error
@@ -16,17 +12,10 @@ public class LogReader
     private int beforeContextBuffer = Int32.Parse(ConfigurationManager.AppSettings["beforeContextBuffer"]);
     private int afterContextBuffer = Int32.Parse(ConfigurationManager.AppSettings["afterContextBuffer"]);
     private int bufferedLine = -1;
-    private static string logAddress;
-    private static MainForm form;
-    private static FileSystemWatcher watcher;
-    private Timer timer;
+    private string logAddress;
 
-
-    public LogReader(string logPath, MainForm f)
-    {
-        // Setup the class variable form to the current instance of the passed over form
-        form = f;
- 
+    public LogReaderThreaded(string logPath)
+	{
         // Set the class variable log path
         logAddress = logPath;
         
@@ -37,19 +26,8 @@ public class LogReader
         // Display the lines to the console
         DisplayAllErrors(lines);
 
-        // Setup a timer to do a asynchronous call to read the log. This will ensure the UI doesn't freeze       
-        timer = new Timer();
-        timer.Interval = 1000;
-        timer.Enabled = true;
-        
-        // Setup up and event to handle what to do when then timer is activated
-        timer.Tick += new EventHandler(TimerEventProcessor);
-
-        // Setup the log watcher
-        SetupWatchLog();   
- 
-        // Start the timer to check the log at every interval
-        timer.Start();
+        // Watch the log file
+        WatchLog();    
     }
         
     // Used to read a log file into an array 
@@ -76,7 +54,7 @@ public class LogReader
     }
 
     // Used to read a log file into an array then reduce the array to only the new lines
-    // Not used as it help anything as still need to read the full file in. A better solution would be able to read from the log starting from the new lines.
+    // Note used as it help anything as still need to read the full file in. A better solution would be able to read from the log starting from the new lines.
 
     private string[] WriteSafeReadNewLines(string path)
     {
@@ -98,9 +76,6 @@ public class LogReader
 
     private void DisplayAllErrors(Array lines)
     {
-        // Create a string builder to to crete the output
-        System.Text.StringBuilder errors = new System.Text.StringBuilder();
-        
         // Use a variable to determine the amount of errors
         int errorCount = 0;
         
@@ -112,10 +87,9 @@ public class LogReader
 
             if ((line.ToLower().Contains("exception") || line.ToLower().Contains("error") || line.ToLower().Contains("paused")) && (bufferedLine < LineNo))
             {
-                // Write to error the string builder
-                errors.Append("\n\r" + "Error on Line #" + LineNo + " in " + logAddress + "\n\r");
-                //form.UpdateOutput(Environment.NewLine + "Error on Line #" + LineNo + " in " + logAddress + Environment.NewLine + Environment.NewLine);
-                
+                // Write to console
+                Console.WriteLine("\n" + "Error on Line #" + LineNo + " in " + logAddress + Environment.NewLine);
+
                 // Print out the error using the context buffers to determine the number of lines
                 // Take 1 off the line number to account for zero index in array
                 int startLine = LineNo - beforeContextBuffer - 1;
@@ -127,8 +101,7 @@ public class LogReader
 
                 while (startLine < endLine)
                 {
-                    errors.Append((startLine + 1) + " --- " + lines.GetValue(startLine));
-                    //form.UpdateOutput((startLine + 1) + " --- " + lines.GetValue(startLine));
+                    Console.WriteLine((startLine + 1) + " --- " + lines.GetValue(startLine));
                     startLine++;
                 }
                 bufferedLine = endLine;
@@ -138,12 +111,8 @@ public class LogReader
 
         if (errorCount.Equals(0))
         {
-            errors.Append("No errors or exceptions found!" + "\n\r");
-            //form.UpdateOutput("No errors or exceptions found!" + "\n");
+            Console.WriteLine("No errors or exceptions found!" + Environment.NewLine);
         }
-
-        //Update the GUI with the error string
-        form.UpdateOutput(errors.ToString());
     }
 
     // Used to display only the new errors in the log file
@@ -186,12 +155,11 @@ public class LogReader
         }
     }
 
-    private void SetupWatchLog()
+    private void WatchLog ()
     {
         // Create a new FileSystemWatcher and set its properties.
-        watcher = new FileSystemWatcher();
+        FileSystemWatcher watcher = new FileSystemWatcher();
         watcher.Path = Path.GetDirectoryName(logAddress);
-
         // Filter to watch the specific file
         watcher.Filter = Path.GetFileName(logAddress);
 
@@ -200,12 +168,19 @@ public class LogReader
 
         // Add event handler
         watcher.Changed += new FileSystemEventHandler(OnChanged);
+
+        // Begin watching.
+        watcher.EnableRaisingEvents = true;
+
+        // Wait for the user to quit the program.
+        //Console.WriteLine(Environment.NewLine + "Press \'q\' to quit the sample.");
+        while (Console.Read() != 'q') ;
     }
-               
-     // Define the event handlers.
+
+    // Define the event handlers.
     private void OnChanged(object source, FileSystemEventArgs e)
     {
-        form.UpdateOutput("\n\r" + "File updated " + DateTime.Now.ToString("HH:mm:ss") + "\n\r"); // for debug
+        Console.WriteLine(Environment.NewLine + "File updated " + DateTime.Now.ToString("HH:mm:ss") + Environment.NewLine); // for debug
         
         // Specify what is done when a file is changed, created, or deleted.
         DisplayUpdate();
@@ -221,10 +196,5 @@ public class LogReader
         DisplayAllErrors(newLines);
     }
 
-    private static void TimerEventProcessor(Object myObject,
-                                        EventArgs myEventArgs)
-    {
-        // Begin watching the log
-        watcher.EnableRaisingEvents = true;
-    }
+
 }
