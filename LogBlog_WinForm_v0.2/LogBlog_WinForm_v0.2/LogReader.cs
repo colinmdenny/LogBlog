@@ -13,13 +13,17 @@ public class LogReader
     // Use these to determine how many lines to write either side of the error
     // Setup the buffered line which is used to determine where we are in the file
 
-    private int beforeContextBuffer = Int32.Parse(ConfigurationManager.AppSettings["beforeContextBuffer"]);
-    private int afterContextBuffer = Int32.Parse(ConfigurationManager.AppSettings["afterContextBuffer"]);
+    private static int beforeContextBuffer = Int32.Parse(ConfigurationManager.AppSettings["beforeContextBuffer"]);
+    private static int afterContextBuffer = Int32.Parse(ConfigurationManager.AppSettings["afterContextBuffer"]);
+    private static double triggerBuffer = double.Parse(ConfigurationManager.AppSettings["triggerBuffer"]);
     private int bufferedLine = -1;
     private static string logAddress;
     private static MainForm form;
     private static FileSystemWatcher watcher;
     private Timer timer;
+    private static DateTime triggerTime;
+    private static DateTime nextTriggerTime = DateTime.UtcNow;
+    private LogEmailer emailer;
 
 
     public LogReader(string logPath, MainForm f)
@@ -98,7 +102,7 @@ public class LogReader
 
     private void DisplayAllErrors(Array lines)
     {
-        // Create a string builder to to crete the output
+        // Create a string builder to create the output
         System.Text.StringBuilder errors = new System.Text.StringBuilder();
         
         // Use a variable to determine the amount of errors
@@ -138,12 +142,17 @@ public class LogReader
 
         if (errorCount.Equals(0))
         {
+            //Update the GUI with the error string
             errors.Append("No errors or exceptions found!" + "\n\r");
-            //form.UpdateOutput("No errors or exceptions found!" + "\n");
+            form.UpdateOutput(errors.ToString());
         }
+        else
+        {
 
-        //Update the GUI with the error string
-        form.UpdateOutput(errors.ToString());
+            //Update the GUI with the error string and email the error
+            form.UpdateOutput(errors.ToString());
+            emailer = new LogEmailer(errors.ToString(), Path.GetFileName(logAddress));
+        }
     }
 
     // Used to display only the new errors in the log file
@@ -201,21 +210,35 @@ public class LogReader
         // Add event handler
         watcher.Changed += new FileSystemEventHandler(OnChanged);
     }
-               
-     // Define the event handlers.
+
+    // Define the event handlers.
     private void OnChanged(object source, FileSystemEventArgs e)
     {
-        form.UpdateOutput("\n\r" + "File updated " + DateTime.Now.ToString("HH:mm:ss") + "\n\r"); // for debug
-        
-        // Specify what is done when a file is changed, created, or deleted.
-        DisplayUpdate();
+        // Get the time of trigger to avoid double trigger
+        triggerTime = DateTime.UtcNow;
+
+        if (triggerTime >= nextTriggerTime)
+        {
+            Console.WriteLine("Passed Trigger Test - triggerTime = " + triggerTime + " nextTriggerTime = " + nextTriggerTime);
+            form.UpdateOutput("\n\r" + "File updated " + DateTime.Now.ToString("HH:mm:ss") + "\n\r");
+
+            // Specify what is done when a file is changed, created, or deleted.
+            DisplayUpdate();
+
+            // Set the next trigger time to ensure we don't get any other notifications within that period - configured by triggerBuffer
+            nextTriggerTime = triggerTime.AddSeconds(triggerBuffer);
+        }
+        else
+        {
+            Console.WriteLine("Failed Trigger Test - triggerTime = " + triggerTime + " nextTriggerTime = " + nextTriggerTime);
+        }
     }
 
-    private void DisplayUpdate ()
+    private void DisplayUpdate()
     {
         // Read each line of the file into a string array. Each element
         // of the array is one line of the file.
-        string[] newLines = WriteSafeReadAllLines(@logAddress); 
+        string[] newLines = WriteSafeReadAllLines(@logAddress);
 
         // Display the lines to the console
         DisplayAllErrors(newLines);
